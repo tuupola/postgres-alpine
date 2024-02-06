@@ -1,0 +1,59 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  serviceName: postgres
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgres
+      app.kubernetes.io/component: database
+      app.kubernetes.io/instance: test-postgres
+  template:
+    metadata:
+      name: postgres
+      # These are not needed by considered a good practice
+      labels:
+        app.kubernetes.io/name: postgres
+        app.kubernetes.io/component: database
+        app.kubernetes.io/instance: test-postgres
+        app.kubernetes.io/version: "15.0"
+    spec:
+      containers:
+        - name: postgres
+          #image: postgres:16.0
+          #image: postgres:16.0-alpine
+          image: postgres:15.0
+          #image: postgres:15.0-alpine
+          #image: postgres:14.0
+          #image: postgres:14.0-alpine
+          env:
+            # These are created automagically
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: example
+            - name: POSTGRES_DB
+              value: test
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 8Gi
+        storageClassName: longhorn

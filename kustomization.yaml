@@ -1,0 +1,4 @@
+namespace: test
+resources:
+  - namespace.yaml
+  - statefulset.yaml
