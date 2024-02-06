@@ -1,9 +1,9 @@
-
-
-
-With Alpine based image:
+With a PVC mounted to `/var/lib/postgresql` and using Alpine based image, the initialisation process creates a new mount `/var/lib/postgresql/data` to the OS disk. This leads to data loss when pod is recycled
 
 ```
+$ grep image statefulset.yaml | grep -v \#
+          image: postgres:15.0-alpine
+
 $ kubectl apply -k .
 namespace/test created
 statefulset.apps/postgres created
@@ -30,9 +30,12 @@ namespace "test" deleted
 statefulset.apps "postgres" deleted
 ```
 
-With Debian based image:
+With Debian based image the problem does not exist.
 
 ```
+$ grep image statefulset.yaml | grep -v \#
+          image: postgres:15.0
+
 $ kubectl apply -k .
 namespace/test created
 statefulset.apps/postgres created
